@@ -15,7 +15,10 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-DRUG = "Therapeutic Assessed for ADA ID"   # the grouping key: one id per drug
+DRUG = "Therapeutic Assessed for ADA ID"   # one id per drug PRODUCT (an originator and each biosimilar differ)
+GROUP = "molecule"                         # grouping key for CV / clustering: one per MOLECULE
+# Why molecule, not product: biosimilars (e.g. 7 adalimumab products) are copies of the same molecule with
+# identical sequences. Grouping by product let the same molecule sit in train and test (found on Day 11).
 
 # ---------------------------------------------------------------------------
 # Features (the reason for each one is documented in notebook 04)
@@ -75,6 +78,9 @@ def load_cohorts(root=None, which="peak"):
     df = pd.read_csv(root / "data" / "processed" / name)
     # 'Unspecified' disease area is almost identical to ophthalmic route (r = 0.88): fold it into 'Other'.
     df["indication"] = df["indication"].replace({"Unspecified": "Other"})
+    # Molecule = first word of the INN, lower case: 'Adalimumab' and its biosimilars -> 'adalimumab'.
+    # Conservative on purpose: 'Trastuzumab emtansine' joins 'trastuzumab' (same antibody inside).
+    df[GROUP] = df["drug_name"].str.lower().str.split().str[0]
     return df
 
 
@@ -236,7 +242,11 @@ def fit_bayes(train, kind="binomial", extra_num=(), draws=1000, tune=1000, chain
                  with mu = sigmoid(alpha + X beta). Small phi = cohorts vary a lot beyond chance.
     Returns (preprocessor, posterior dict of numpy arrays, InferenceData).
     """
+    import logging
     import pymc as pm
+    for name in list(logging.root.manager.loggerDict):          # keep notebook output tidy: hide sampler chatter
+        if name.startswith("pymc"):
+            logging.getLogger(name).setLevel(logging.ERROR)
     pre = make_preprocessor(scale=True, extra_num=extra_num).fit(train)
     X = pre.transform(train)
     with pm.Model():
@@ -303,3 +313,51 @@ def binomial_interval(n, p, level=0.9):
     """Predictive interval for y if the model's point probability p were exactly right (no extra spread)."""
     q = (1 - level) / 2
     return binom.ppf(q, n, p), binom.ppf(1 - q, n, p)
+
+
+# ---------------------------------------------------------------------------
+# Sequence-derived features (notebook 09)
+# ---------------------------------------------------------------------------
+SEQ_FEATURES = ["seq_log_length", "seq_pI", "seq_gravy", "seq_aromaticity", "seq_instability"]
+AMINO_ACIDS = "ACDEFGHIKLMNPQRSTVWY"
+
+
+def _whole_molecule_features(chains):
+    """Physico-chemical features of the whole molecule.
+
+    chains: list of (sequence, multiplicity). An IgG antibody = 2 heavy + 2 light chains, so each chain is
+    repeated by its multiplicity and all chains are joined before computing features.
+    """
+    from Bio.SeqUtils.ProtParam import ProteinAnalysis
+    seq = "".join("".join(c for c in str(s).upper() if c in AMINO_ACIDS) * int(m) for s, m in chains)
+    if len(seq) < 20:
+        return None
+    pa = ProteinAnalysis(seq)
+    return {"seq_log_length": np.log(len(seq)),        # size of the molecule (log of amino-acid count)
+            "seq_pI": pa.isoelectric_point(),          # electric charge balance point
+            "seq_gravy": pa.gravy(),                   # average 'water-hating' score (hydrophobicity)
+            "seq_aromaticity": pa.aromaticity(),       # share of F, W, Y ring-shaped amino acids
+            "seq_instability": pa.instability_index()} # predicted stability in a test tube (>40 = unstable)
+
+
+def load_sequence_features(root=None):
+    """One row per drug with whole-molecule sequence features.
+
+    Link: therapeutics.'Sequence IDC database Identifier(s)' -> sequences.'Sequence ID' (this also covers
+    biosimilars that reuse the originator's sequence), falling back to sequences.'Parental Molecule Therapeutic ID'.
+    """
+    root = Path(root) if root else find_repo_root()
+    seqs = pd.read_csv(root / "data" / "raw" / "sequences.csv").set_index("Sequence ID")
+    thera = pd.read_csv(root / "data" / "raw" / "therapeutics.csv")
+    rows = []
+    for _, t in thera.iterrows():
+        ids = [i.strip() for i in str(t["Sequence IDC database Identifier(s)"]).split(",") if i.strip() in seqs.index]
+        if not ids:
+            ids = list(seqs.index[seqs["Parental Molecule Therapeutic ID"] == t["Therapeutic ID"]])
+        if not ids:
+            continue
+        chains = [(seqs.loc[i, "Amino Acid Sequence"], seqs.loc[i, "Chain Multiplicity"]) for i in ids]
+        feats = _whole_molecule_features(chains)
+        if feats:
+            rows.append({DRUG: t["Therapeutic ID"], "n_chains": len(ids), **feats})
+    return pd.DataFrame(rows)

@@ -28,7 +28,7 @@ Linking key: `Therapeutic Assessed for ADA ID` (trials) = `Therapeutic ID` (ther
 2. Bayesian Binomial / Beta-Binomial regression (PyMC)
 3. XGBoost
 
-All are compared using **grouped cross-validation by drug**, so that no drug appears in both training and testing.
+All are compared using **grouped cross-validation by molecule**, so that no molecule (including its biosimilars) appears in both training and testing.
 
 ## Repo layout
 ```
@@ -52,7 +52,11 @@ src/          shared code: feature lists, preprocessing, metrics (used by every 
 - [x] Day 5: Binomial GLM, overdispersion, regularisation, sensitivity (`notebooks/05_binomial_glm.ipynb`; CV results in `results/`)
 - [x] Day 6: XGBoost with nested tuning, first model scoreboard, saved model (`notebooks/06_xgboost.ipynb`, `models/xgb_model.joblib`)
 - [x] Day 7: checkpoint, full re-run from raw data verified identical; Week 1 summary (`reports/week1_summary.md`)
-- [ ] Days 8–14: Bayesian model, sequence features, comparison, interpretation
+- [x] Days 8–9: Bayesian Binomial (`07_bayesian_binomial`)
+- [x] Day 10: Bayesian Beta-Binomial + posterior predictive check (`08_beta_binomial`, `models/bayes_betabinomial.joblib`)
+- [x] Days 11–12: sequence features, tested, no consistent improvement (`09_sequence_features`); CV regrouped by molecule
+- [x] Day 13: full model comparison, calibration, coverage (`10_model_comparison`)
+- [x] Day 14: interpretation, SHAP, cross-method agreement (`11_interpretation`); Week 2 summary (`reports/week2_summary.md`)
 - [ ] Days 15–21: figures, dashboard, presentation
 
 ## Running in Colab

@@ -4,6 +4,8 @@
 **Data:** Immunogenicity Database Collaborative (IDC), clinical trials, therapeutics and sequence tables
 **Status:** Days 1–7 of 21 complete, on schedule. All notebooks re-run from raw data with identical results.
 
+> **Correction (Day 11):** cross-validation folds and clustered standard errors were originally grouped by drug *product*. Because biosimilars are copies of the same molecule, they are now grouped by **molecule** (108 molecules, 137 products). The numbers below are from the corrected run; conclusions are unchanged.
+
 ---
 
 ## 1. Question and set-up
@@ -35,41 +37,42 @@ immunosuppressants flagged; rare categories grouped; a latest-timepoint version 
 
 ![Overdispersion funnel](../figures/eda_funnel_overdispersion.png)
 
-## 4. Fair evaluation: grouped cross-validation by drug
+## 4. Fair evaluation: grouped cross-validation by molecule
 
-Cohorts of the same drug are not independent, so every model is tested on **drugs it has never seen** (5 folds, no
-drug shared between folds). A "drug memoriser" shows why: under a random split it cuts error from 13.3 to 7.5
-percentage points, but under the honest grouped split it is no better than guessing the average.
+Cohorts of the same molecule are not independent, so every model is tested on **molecules it has never seen** (5 folds,
+no molecule shared between folds; biosimilars stay with their originator). A "drug memoriser" shows why: under a
+random split it cuts error from 13.3 to 7.5 percentage points, but under the honest grouped split it is no better than
+guessing the average (13.1).
 
 ![Leakage demonstration](../figures/leakage_demo.png)
 
-## 5. Models so far (unseen drugs, mean ± SD over 5 folds)
+## 5. Models so far (unseen molecules, mean ± SD over 5 folds)
 
 | Model | Weighted MAE ↓ | Weighted RMSE ↓ | Held-out log-lik ↑ |
 |---|---|---|---|
-| Naive baseline (training average) | 0.137 ± 0.038 | 0.189 ± 0.060 | −18.1 ± 8.0 |
-| Binomial GLM | 0.198 ± 0.068 | 0.276 ± 0.098 | −39.5 ± 22.0 |
-| GLM + L2 (penalty tuned by nested CV) | 0.138 ± 0.038 | 0.185 ± 0.063 | −18.5 ± 9.3 |
-| GLM + L1 (penalty tuned by nested CV) | 0.138 ± 0.037 | 0.191 ± 0.061 | −19.0 ± 8.7 |
-| **XGBoost (pre-specified settings)** | **0.131 ± 0.038** | **0.181 ± 0.054** | −19.2 ± 9.4 |
-| XGBoost (nested-CV tuned) | 0.140 ± 0.049 | 0.190 ± 0.066 | −19.8 ± 9.9 |
+| Naive baseline (training average) | 0.131 ± 0.037 | 0.183 ± 0.060 | −17.8 ± 8.9 |
+| Binomial GLM | 0.161 ± 0.033 | 0.230 ± 0.041 | −33.4 ± 18.5 |
+| GLM + L2 (penalty tuned by nested CV) | 0.132 ± 0.039 | 0.183 ± 0.062 | −18.7 ± 10.0 |
+| GLM + L1 (penalty tuned by nested CV) | 0.135 ± 0.038 | 0.188 ± 0.059 | −19.0 ± 9.1 |
+| **XGBoost (pre-specified settings)** | **0.128 ± 0.038** | **0.180 ± 0.060** | −19.8 ± 11.0 |
+| XGBoost (nested-CV tuned) | 0.136 ± 0.045 | 0.186 ± 0.064 | −20.9 ± 12.2 |
 
 ![Model comparison](../figures/model_comparison_day6.png)
 
 **Associations found by the GLM** (cluster-robust 95 % CI, adjusted for all other features):
-trial start year OR 1.15/year [1.08–1.23] (likely more sensitive assays); dose OR 0.73 per log unit [0.54–0.98];
-longer follow-up OR 1.18 [1.01–1.38]; IgG2 vs IgG1 backbone OR 0.22 [0.06–0.82]; bacterial vs humanized origin OR ≈ 45 [1.3–1500].
-Only 11 of 42 features remain significant once standard errors account for clustering by drug (40 of 42 with naive errors).
-XGBoost relies on a similar set: dose, year, follow-up, origin, backbone, trial design.
+trial start year OR 1.15/year [1.07–1.24] (likely more sensitive assays); dose OR 0.73 per log unit [0.54–0.99];
+biosimilar OR 1.93 [1.20–3.10]; active-controlled trials OR 2.6 [1.3–5.2]; IgG2 vs IgG1 backbone OR 0.22 [0.06–0.85];
+bacterial vs humanized origin OR ≈ 45 [1.3–1560]. Only 10 of 42 features remain significant once standard errors account
+for clustering by molecule (40 of 42 with naive errors). XGBoost relies on a similar set: dose, origin, year, trial design, follow-up.
 
 ![GLM odds ratios](../figures/glm_forest.png)
 
 ## 6. Interpretation so far
 
-* Trial and drug-label features capture **real but modest** signal: assay era, dose, follow-up length and drug origin.
-* For a **brand-new drug**, the best model so far improves on "guess the average" by under one percentage point, which is
-  smaller than the fold-to-fold variation. **Most variation in ADA is drug-specific.**
-* The plain GLM over-fits (42 parameters, ~110 training drugs, overdispersed data) and is worse than the baseline.
+* Trial and drug-label features capture **real but modest** signal: assay era, dose, drug origin, trial type.
+* For a **brand-new molecule**, the best model so far improves on "guess the average" by about 0.3 percentage points,
+  which is smaller than the fold-to-fold variation. **Most variation in ADA is molecule-specific.**
+* The plain GLM over-fits (42 parameters, ~86 training molecules, overdispersed data) and is worse than the baseline.
   Regularisation only brings it back to baseline level.
 * All results are **associations**, not causal effects.
 
