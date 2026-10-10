@@ -1,0 +1,10 @@
+# Dashboard-only dependencies (Streamlit Community Cloud reads this file next to app.py).
+# Versions match the ones used to save the models, so the saved preprocessing loads correctly.
+streamlit>=1.50
+plotly>=5.20
+pandas==3.0.6
+numpy==2.4.6
+scipy==1.17.1
+scikit-learn==1.9.1
+xgboost==3.2.0
+joblib==1.6.0
