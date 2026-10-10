@@ -136,7 +136,7 @@ epitope predictions; external validation on newly added IDC trials.
 
 ## 8. Reproducibility
 
-All results regenerate from `data/raw/` by running `notebooks/01`–`12` in order (≈ 35 min, mostly Bayesian sampling).
+All results regenerate from `data/raw/` by running `notebooks/01`–`12` in order (≈ 25 min, mostly Bayesian sampling). Verified on Day 18: a fresh clone with all outputs deleted reproduced all 27 processed-data and result files exactly.
 Shared code: `src/immuno.py`. Saved models: `models/`. Dashboard: `app/app.py`.
 
 ## Deliverables

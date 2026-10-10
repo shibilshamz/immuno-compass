@@ -59,7 +59,7 @@ src/          shared code: feature lists, preprocessing, metrics (used by every 
 - [x] Day 14: interpretation, SHAP, cross-method agreement (`11_interpretation`); Week 2 summary (`reports/week2_summary.md`)
 - [x] Day 15: final slide figures (`12_final_figures`, `figures/final/`)
 - [x] Days 16–17: Streamlit dashboard (`app/app.py`, see `app/README.md`)
-- [x] Day 18: final report (`reports/final_report.md`)
+- [x] Day 18: final report (`reports/final_report.md`); fresh-clone re-run of notebooks 01–12 reproduced all 27 data/result files exactly
 - [x] Days 19–21: presentation (`slides/immuno_compass.pptx`), speaker script and Q&A preparation (`slides/`)
 
 ## Running in Colab
