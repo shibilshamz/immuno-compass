@@ -38,6 +38,7 @@ notebooks/    Colab notebooks, numbered in order
 app/          Streamlit dashboard
 figures/      saved charts
 models/       saved model files used by the dashboard
+reports/      progress summaries
 slides/       final presentation
 results/      cross-validation scores and out-of-fold predictions per model
 src/          shared code: feature lists, preprocessing, metrics (used by every model notebook)
@@ -50,7 +51,7 @@ src/          shared code: feature lists, preprocessing, metrics (used by every 
 - [x] Day 4: features, preprocessing and grouped CV folds (`notebooks/04_features_and_cv.ipynb`, `src/immuno.py`, `data/processed/folds.csv`)
 - [x] Day 5: Binomial GLM, overdispersion, regularisation, sensitivity (`notebooks/05_binomial_glm.ipynb`; CV results in `results/`)
 - [x] Day 6: XGBoost with nested tuning, first model scoreboard, saved model (`notebooks/06_xgboost.ipynb`, `models/xgb_model.joblib`)
-- [ ] Day 7: checkpoint
+- [x] Day 7: checkpoint, full re-run from raw data verified identical; Week 1 summary (`reports/week1_summary.md`)
 - [ ] Days 8–14: Bayesian model, sequence features, comparison, interpretation
 - [ ] Days 15–21: figures, dashboard, presentation
 
