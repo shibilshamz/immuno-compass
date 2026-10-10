@@ -180,3 +180,42 @@ def save_results(name, per_fold, oof, df, root=None):
     out.mkdir(exist_ok=True)
     per_fold.assign(model=name).to_csv(out / f"cv_{name}.csv", index=False)
     pd.DataFrame({"cohort_id": df["cohort_id"].values, "pred": oof}).to_csv(out / f"oof_{name}.csv", index=False)
+
+
+# ---------------------------------------------------------------------------
+# Model 3: XGBoost - shared by notebooks 06 and 13
+# ---------------------------------------------------------------------------
+XGB_BASE = dict(n_estimators=400, learning_rate=0.05, subsample=0.8, colsample_bytree=0.8)
+
+# The small tuning grid: tree depth x how strongly big cohorts count.
+XGB_GRID = [
+    {"max_depth": 4, "weight": "n"},
+    {"max_depth": 4, "weight": "sqrt_n"},
+    {"max_depth": 2, "weight": "n"},
+    {"max_depth": 2, "weight": "sqrt_n"},
+]
+
+
+def cohort_weights(n, scheme):
+    """Weight per cohort, rescaled to average 1 so XGBoost's built-in regularisation keeps its meaning."""
+    n = np.asarray(n, dtype=float)
+    w = n if scheme == "n" else np.sqrt(n)
+    return w / w.mean()
+
+
+def fit_xgb(train, max_depth=4, weight="n", seed=42):
+    """XGBoost on the ADA frequency y/n with a logistic objective (cross-entropy), weighted by cohort size.
+
+    With weight 'n' the loss equals the Binomial log-likelihood; 'sqrt_n' lets big cohorts count less,
+    a pragmatic allowance for overdispersion. Returns (preprocessor, model).
+    """
+    from xgboost import XGBRegressor
+    pre = make_preprocessor(scale=False).fit(train)
+    model = XGBRegressor(objective="reg:logistic", max_depth=max_depth, random_state=seed, n_jobs=4,
+                         base_score=float(train["y"].sum() / train["n"].sum()), **XGB_BASE)
+    model.fit(pre.transform(train), train["y"] / train["n"], sample_weight=cohort_weights(train["n"], weight))
+    return pre, model
+
+
+def predict_xgb(pre, model, test):
+    return model.predict(pre.transform(test))

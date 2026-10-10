@@ -49,7 +49,8 @@ src/          shared code: feature lists, preprocessing, metrics (used by every 
 - [x] Day 3: exploratory analysis (`notebooks/03_exploratory_analysis.ipynb`, charts in `figures/`)
 - [x] Day 4: features, preprocessing and grouped CV folds (`notebooks/04_features_and_cv.ipynb`, `src/immuno.py`, `data/processed/folds.csv`)
 - [x] Day 5: Binomial GLM, overdispersion, regularisation, sensitivity (`notebooks/05_binomial_glm.ipynb`; CV results in `results/`)
-- [ ] Days 6–7: XGBoost, checkpoint
+- [x] Day 6: XGBoost with nested tuning, first model scoreboard, saved model (`notebooks/06_xgboost.ipynb`, `models/xgb_model.joblib`)
+- [ ] Day 7: checkpoint
 - [ ] Days 8–14: Bayesian model, sequence features, comparison, interpretation
 - [ ] Days 15–21: figures, dashboard, presentation
 
