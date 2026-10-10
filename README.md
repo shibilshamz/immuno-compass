@@ -39,16 +39,22 @@ app/          Streamlit dashboard
 figures/      saved charts
 models/       saved model files used by the dashboard
 slides/       final presentation
+src/          shared code: feature lists, preprocessing, metrics (used by every model notebook)
 ```
 
 ## Progress
 - [x] Day 1: load and inspect (`notebooks/01_load_and_inspect.ipynb`)
 - [x] Day 2: target definition and cleaning (`notebooks/02_target_and_cleaning.ipynb` → `data/processed/cohorts.csv`, 1,754 cohorts × 137 drugs)
 - [x] Day 3: exploratory analysis (`notebooks/03_exploratory_analysis.ipynb`, charts in `figures/`)
-- [ ] Days 4–7: features, grouped CV, GLM, XGBoost
+- [x] Day 4: features, preprocessing and grouped CV folds (`notebooks/04_features_and_cv.ipynb`, `src/immuno.py`, `data/processed/folds.csv`)
+- [ ] Days 5–7: Binomial GLM, XGBoost, checkpoint
 - [ ] Days 8–14: Bayesian model, sequence features, comparison, interpretation
 - [ ] Days 15–21: figures, dashboard, presentation
 
 ## Running in Colab
 Open a notebook from GitHub in Colab (File → Open notebook → GitHub, tick "Include private repos").
 If the data folder isn't found, the notebook will ask you to upload the 5 CSV files.
+
+### Colab with the private repo (notebooks 04 onwards)
+The first cell asks for a GitHub token and clones the repo, so data and `src/` are available.
+Create one at github.com/settings/tokens → *Fine-grained token* → repository access: `immuno-compass` → *Contents: Read-only*.
