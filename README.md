@@ -1,0 +1,53 @@
+# Immuno Compass
+
+**Data-driven prediction and analysis of immunogenicity in therapeutic biologics.**
+Foundations of Data Science course project.
+
+## The question
+Biologic drugs (such as therapeutic antibodies) are sometimes treated as "foreign" by a patient's immune system,
+which then makes **anti-drug antibodies (ADAs)**. Using information about the drug, the treatment and the
+clinical study, can we predict **what fraction of patients develop ADAs**, and which factors are most associated with it?
+
+Each data row gives *n* patients tested and *y* ADA-positive patients, so we model **y ~ Binomial(n, p)**.
+
+## Data
+Immunogenicity Database Collaborative (IDC), immunogenicitydb.org. Files are in `data/raw/`:
+
+| File | What it is |
+|---|---|
+| `clinical_trials.csv` | 3,334 rows: one patient group × timepoint per row, with n and y |
+| `aggregated_ada_values.csv` | Same rows plus pre-computed cohort / trial / drug-level summaries |
+| `therapeutics.csv` | 218 drugs: modality, species, backbone, expression system… |
+| `sequences.csv` | 222 amino-acid chains for 120 drugs |
+| `controlled_language.csv` | Allowed values for categorical columns |
+
+Linking key: `Therapeutic Assessed for ADA ID` (trials) = `Therapeutic ID` (therapeutics) = `Parental Molecule Therapeutic ID` (sequences).
+
+## Models
+1. Binomial GLM (statistical baseline)
+2. Bayesian Binomial / Beta-Binomial regression (PyMC)
+3. XGBoost
+
+All are compared using **grouped cross-validation by drug**, so that no drug appears in both training and testing.
+
+## Repo layout
+```
+data/raw/     original IDC CSV files (never edited)
+notebooks/    Colab notebooks, numbered in order
+app/          Streamlit dashboard
+figures/      saved charts
+models/       saved model files used by the dashboard
+slides/       final presentation
+```
+
+## Progress
+- [x] Day 1: load and inspect (`notebooks/01_load_and_inspect.ipynb`)
+- [ ] Day 2: target definition and preprocessing
+- [ ] Day 3: exploratory analysis
+- [ ] Days 4–7: features, grouped CV, GLM, XGBoost
+- [ ] Days 8–14: Bayesian model, sequence features, comparison, interpretation
+- [ ] Days 15–21: figures, dashboard, presentation
+
+## Running in Colab
+Open a notebook from GitHub in Colab (File → Open notebook → GitHub, tick "Include private repos").
+If the data folder isn't found, the notebook will ask you to upload the 5 CSV files.

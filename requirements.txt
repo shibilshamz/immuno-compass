@@ -1,0 +1,14 @@
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+statsmodels
+pymc
+arviz
+xgboost
+shap
+biopython
+joblib
+streamlit
+plotly

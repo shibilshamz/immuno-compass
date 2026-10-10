@@ -1,0 +1,112 @@
+Table,Column Header,Allowed Value,Value Order
+clinical_trials,ADA interpreted to impact Efficacy,Yes,1
+clinical_trials,ADA interpreted to impact Efficacy,No,2
+clinical_trials,ADA interpreted to impact Efficacy,Not reported,3
+clinical_trials,ADA interpreted to impact PK,Yes,1
+clinical_trials,ADA interpreted to impact PK,No,2
+clinical_trials,ADA interpreted to impact PK,Not reported,3
+clinical_trials,Disease Indication Category,Blood Disorders,1
+clinical_trials,Disease Indication Category,Cancer and neoplasms,2
+clinical_trials,Disease Indication Category,Cardiovascular,3
+clinical_trials,Disease Indication Category,Infectious diseases,4
+clinical_trials,Disease Indication Category,Inflammation and autoimmunity,5
+clinical_trials,Disease Indication Category,Metobolic and endocrine disorders,6
+clinical_trials,Disease Indication Category,Musculoskeletal,7
+clinical_trials,Disease Indication Category,Neurological,8
+clinical_trials,Disease Indication Category,Renal and urogenital,9
+clinical_trials,Disease Indication Category,Reproductive health,10
+clinical_trials,Disease Indication Category,Non-inflammatory respiratory diseases,11
+clinical_trials,Disease Indication Category,Non-inflammatory skin diseases,12
+clinical_trials,Disease Indication Category,Healthy Volunteer,13
+clinical_trials,Disease Indication Category,Unspecified,14
+clinical_trials,Therapeutic Exposure Status,Therapeutic Naive,1
+clinical_trials,Therapeutic Exposure Status,Therapeutic Exposed,2
+clinical_trials,Therapeutic Route of Administration,Subcutaneous,1
+clinical_trials,Therapeutic Route of Administration,Intravenous,2
+clinical_trials,Therapeutic Route of Administration,Oral,3
+clinical_trials,Therapeutic Route of Administration,Ophthalmic,4
+clinical_trials,Therapeutic Route of Administration,Intramuscular,5
+clinical_trials,Therapeutic Route of Administration,Other,6
+clinical_trials,Trial External Source,Clinicaltrials.gov,1
+clinical_trials,Trial External Source,Journal Article,2
+clinical_trials,Trial External Source,FDA Label,3
+clinical_trials,Trial External Source,EU Clinical Trials Register,4
+sequences,Chain Descriptor,Heavy Chain 1,1
+sequences,Chain Descriptor,Heavy Chain 2,2
+sequences,Chain Descriptor,Light Chain 1,3
+sequences,Chain Descriptor,Light Chain 2,4
+sequences,Chain Descriptor,Domain 1,5
+sequences,Chain Descriptor,Domain 2,6
+sequences,Chain Descriptor,Domain 3,7
+sequences,Chain Identifier,A,1
+sequences,Chain Identifier,B,2
+sequences,Chain Multiplicity,1,1
+sequences,Chain Multiplicity,2,2
+sequences,Chain Multiplicity,4,3
+therapeutics,Antibody Backbone,Human Fab (CH1 IgG1),1
+therapeutics,Antibody Backbone,Human IgG1,2
+therapeutics,Antibody Backbone,Human IgG2,3
+therapeutics,Antibody Backbone,Human IgG2(CH1-hinge)/IgG4(CH2-CH3),4
+therapeutics,Antibody Backbone,Human IgG4,5
+therapeutics,Antibody Backbone,Murine IgG1,6
+therapeutics,Antibody Backbone,Murine IgG2,7
+therapeutics,Antibody Backbone,Not Applicable,8
+therapeutics,Antibody Backbone,ScFv,9
+therapeutics,Antibody Backbone,VHH,10
+therapeutics,Conjugate Modification,Unconjugated,1
+therapeutics,Conjugate Modification,Drug Conjugate,2
+therapeutics,Conjugate Modification,Not Applicable,3
+therapeutics,Conjugate Modification,PEG Conjugate,4
+therapeutics,Conjugate Modification,Radioisotope Conjugate,5
+therapeutics,Conjugate Modification,Lipid Conjugate,6
+therapeutics,EU approval,Yes,1
+therapeutics,EU approval,No,2
+therapeutics,Expression System,E. coli bacteria,1
+therapeutics,Expression System,Chinese hamster ovary (CHO) cells,2
+therapeutics,Expression System,Undetermined,3
+therapeutics,Expression System,Murine myeloma cells,4
+therapeutics,Expression System,Pichia pastoris yeast cells,5
+therapeutics,Expression System,Erwinia chrysanthemi,6
+therapeutics,Expression System,Murine hybridoma,7
+therapeutics,FDA approved,Yes,1
+therapeutics,FDA approved,No,2
+therapeutics,Furthest Development Stage Reached,Approval,1
+therapeutics,Furthest Development Stage Reached,Phase 0,2
+therapeutics,Furthest Development Stage Reached,Phase I,3
+therapeutics,Furthest Development Stage Reached,Phase II,4
+therapeutics,Furthest Development Stage Reached,Phase III,5
+therapeutics,Furthest Development Stage Reached,Phase IV,6
+therapeutics,Furthest Development Stage Reached,Preclinical,7
+therapeutics,Labelled as Biosimilar?,Yes,1
+therapeutics,Labelled as Biosimilar?,No,2
+therapeutics,Light Chain,Kappa,1
+therapeutics,Light Chain,Lambda,2
+therapeutics,Light Chain,Not Applicable,3
+therapeutics,Light Chain,kappa and lambda,4
+therapeutics,Protein Modality,All Other Multispecifics,1
+therapeutics,Protein Modality,Antibody Fragments,2
+therapeutics,Protein Modality,Antibody-drug Conjugate,3
+therapeutics,Protein Modality,Blood Clotting Factors,4
+therapeutics,Protein Modality,Cytokine,5
+therapeutics,Protein Modality,Enzyme,6
+therapeutics,Protein Modality,Fc-Fusion,7
+therapeutics,Protein Modality,Hormone and Growth Factors,8
+therapeutics,Protein Modality,IgG-like Bispecific,9
+therapeutics,Protein Modality,Immunotoxin,10
+therapeutics,Protein Modality,Monoclonal Antibody,11
+therapeutics,Protein Modality,Peptide,12
+therapeutics,Protein Modality,Single-Domain Antibody,13
+therapeutics,Sequence Verified?,Yes,1
+therapeutics,Sequence Verified?,No,2
+therapeutics,Species,Bacterial,1
+therapeutics,Species,Camelid,2
+therapeutics,Species,Chimeric,3
+therapeutics,Species,Goat,4
+therapeutics,Species,Guinea Pig,5
+therapeutics,Species,Horse,6
+therapeutics,Species,Human,7
+therapeutics,Species,Humanized,8
+therapeutics,Species,Mouse,9
+therapeutics,Species,Rabbit,10
+therapeutics,Species,Shark,11
+therapeutics,Species,Viral,12
