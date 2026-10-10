@@ -83,12 +83,14 @@ def load_folds(root=None):
     return pd.read_csv(root / "data" / "processed" / "folds.csv")
 
 
-def make_preprocessor(scale=True):
+def make_preprocessor(scale=True, extra_num=()):
     """Turn the raw feature columns into a numeric matrix.
 
     * categoricals -> one-hot, dropping the REFERENCE level; unseen levels in a test fold -> all zeros
     * numerics     -> median imputation + a 0/1 'was missing' column, then (optionally) standardised
     * 0/1 flags    -> kept as they are (standardised too when scale=True, for the GLM / Bayesian prior)
+
+    extra_num: additional numeric columns (e.g. sequence features), treated like NUM_FEATURES.
 
     It must be FIT ON THE TRAINING FOLD ONLY, so the test fold never influences medians or scaling.
     """
@@ -100,7 +102,7 @@ def make_preprocessor(scale=True):
         [
             ("cat", OneHotEncoder(drop=[REFERENCE[c] for c in CAT_FEATURES], handle_unknown="ignore",
                                   sparse_output=False), CAT_FEATURES),
-            ("num", Pipeline(num_steps), NUM_FEATURES),
+            ("num", Pipeline(num_steps), NUM_FEATURES + list(extra_num)),
             ("flag", Pipeline(flag_steps), FLAG_FEATURES),
         ],
         verbose_feature_names_out=False,
@@ -148,7 +150,7 @@ def cross_validate(df, fold_col, fit_predict):
 # ---------------------------------------------------------------------------
 # Model 1: Binomial GLM (optionally penalised) - shared by notebooks 05 and 13
 # ---------------------------------------------------------------------------
-def fit_glm(train, alpha=0.0, L1_wt=0.0):
+def fit_glm(train, alpha=0.0, L1_wt=0.0, extra_num=()):
     """Fit a Binomial GLM on (y successes, n - y failures). Returns (preprocessor, params).
 
     alpha = 0       -> plain maximum-likelihood GLM
@@ -156,7 +158,7 @@ def fit_glm(train, alpha=0.0, L1_wt=0.0):
     The intercept is never penalised.
     """
     import statsmodels.api as sm
-    pre = make_preprocessor(scale=True).fit(train)
+    pre = make_preprocessor(scale=True, extra_num=extra_num).fit(train)
     X = sm.add_constant(pre.transform(train), has_constant="add")
     endog = np.column_stack([train["y"], train["n"] - train["y"]])
     model = sm.GLM(endog, X, family=sm.families.Binomial())
@@ -203,14 +205,14 @@ def cohort_weights(n, scheme):
     return w / w.mean()
 
 
-def fit_xgb(train, max_depth=4, weight="n", seed=42):
+def fit_xgb(train, max_depth=4, weight="n", seed=42, extra_num=()):
     """XGBoost on the ADA frequency y/n with a logistic objective (cross-entropy), weighted by cohort size.
 
     With weight 'n' the loss equals the Binomial log-likelihood; 'sqrt_n' lets big cohorts count less,
     a pragmatic allowance for overdispersion. Returns (preprocessor, model).
     """
     from xgboost import XGBRegressor
-    pre = make_preprocessor(scale=False).fit(train)
+    pre = make_preprocessor(scale=False, extra_num=extra_num).fit(train)
     model = XGBRegressor(objective="reg:logistic", max_depth=max_depth, random_state=seed, n_jobs=4,
                          base_score=float(train["y"].sum() / train["n"].sum()), **XGB_BASE)
     model.fit(pre.transform(train), train["y"] / train["n"], sample_weight=cohort_weights(train["n"], weight))
@@ -219,3 +221,85 @@ def fit_xgb(train, max_depth=4, weight="n", seed=42):
 
 def predict_xgb(pre, model, test):
     return model.predict(pre.transform(test))
+
+
+# ---------------------------------------------------------------------------
+# Model 2: Bayesian Binomial / Beta-Binomial regression (PyMC) - notebooks 07, 08, 09, 10
+# ---------------------------------------------------------------------------
+def fit_bayes(train, kind="binomial", extra_num=(), draws=1000, tune=1000, chains=4, seed=42):
+    """Bayesian logistic regression for ADA counts.
+
+    Priors:      alpha ~ Normal(0, 1.5), each beta ~ Normal(0, 1) on standardised features,
+                 phi ~ Exponential(0.1) (Beta-Binomial only; mean 10).
+    Likelihood:  'binomial'      y ~ Binomial(n, p)
+                 'betabinomial'  p_cohort ~ Beta(mu*phi, (1-mu)*phi), y ~ Binomial(n, p_cohort)
+                 with mu = sigmoid(alpha + X beta). Small phi = cohorts vary a lot beyond chance.
+    Returns (preprocessor, posterior dict of numpy arrays, InferenceData).
+    """
+    import pymc as pm
+    pre = make_preprocessor(scale=True, extra_num=extra_num).fit(train)
+    X = pre.transform(train)
+    with pm.Model():
+        alpha = pm.Normal("alpha", 0, 1.5)
+        beta = pm.Normal("beta", 0, 1, shape=X.shape[1])
+        mu = pm.math.sigmoid(alpha + pm.math.dot(X, beta))
+        if kind == "binomial":
+            pm.Binomial("obs", n=train["n"].values, p=mu, observed=train["y"].values)
+        else:
+            phi = pm.Exponential("phi", 0.1)
+            pm.BetaBinomial("obs", alpha=mu * phi, beta=(1 - mu) * phi,
+                            n=train["n"].values, observed=train["y"].values)
+        idata = pm.sample(draws, tune=tune, chains=chains, cores=chains, target_accept=0.9,
+                          random_seed=seed, progressbar=False)
+    post = idata.posterior.stack(s=("chain", "draw"))
+    samples = {"alpha": post["alpha"].values, "beta": post["beta"].values.T}      # (S,), (S, K)
+    if kind != "binomial":
+        samples["phi"] = post["phi"].values
+    return pre, samples, idata
+
+
+def bayes_mu_draws(pre, samples, test, max_draws=1000, seed=0):
+    """Posterior draws of the expected ADA frequency for each test cohort: array (S, N)."""
+    S = len(samples["alpha"])
+    idx = np.random.default_rng(seed).choice(S, size=min(S, max_draws), replace=False)
+    X = pre.transform(test)
+    eta = samples["alpha"][idx, None] + samples["beta"][idx] @ X.T
+    return 1 / (1 + np.exp(-eta)), idx
+
+
+def predict_bayes(pre, samples, test):
+    """Point prediction = posterior mean of the expected ADA frequency."""
+    mu, _ = bayes_mu_draws(pre, samples, test)
+    return mu.mean(axis=0)
+
+
+def bayes_predictive(pre, samples, test, level=0.9, seed=0):
+    """Full predictive checks for held-out cohorts.
+
+    Returns dict with
+      lps      : log predictive score per cohort = log of the average (over the posterior) probability of the observed y
+      lo, hi   : central `level` predictive interval for y (simulated)
+    """
+    from scipy.stats import betabinom
+    from scipy.special import logsumexp
+    mu, idx = bayes_mu_draws(pre, samples, test, seed=seed)
+    y, n = test["y"].values, test["n"].values
+    rng = np.random.default_rng(seed)
+    if "phi" in samples:
+        phi = samples["phi"][idx][:, None]
+        a, b = np.clip(mu * phi, 1e-9, None), np.clip((1 - mu) * phi, 1e-9, None)
+        logp = betabinom.logpmf(y, n, a, b)
+        p_sim = rng.beta(a, b)
+    else:
+        logp = binom.logpmf(y, n, np.clip(mu, 1e-9, 1 - 1e-9))
+        p_sim = mu
+    lps = logsumexp(logp, axis=0) - np.log(logp.shape[0])
+    y_sim = rng.binomial(n, p_sim)
+    q = (1 - level) / 2
+    return {"lps": lps, "lo": np.quantile(y_sim, q, axis=0), "hi": np.quantile(y_sim, 1 - q, axis=0)}
+
+
+def binomial_interval(n, p, level=0.9):
+    """Predictive interval for y if the model's point probability p were exactly right (no extra spread)."""
+    q = (1 - level) / 2
+    return binom.ppf(q, n, p), binom.ppf(1 - q, n, p)
