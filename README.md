@@ -39,6 +39,7 @@ app/          Streamlit dashboard
 figures/      saved charts
 models/       saved model files used by the dashboard
 slides/       final presentation
+results/      cross-validation scores and out-of-fold predictions per model
 src/          shared code: feature lists, preprocessing, metrics (used by every model notebook)
 ```
 
@@ -47,7 +48,8 @@ src/          shared code: feature lists, preprocessing, metrics (used by every 
 - [x] Day 2: target definition and cleaning (`notebooks/02_target_and_cleaning.ipynb` → `data/processed/cohorts.csv`, 1,754 cohorts × 137 drugs)
 - [x] Day 3: exploratory analysis (`notebooks/03_exploratory_analysis.ipynb`, charts in `figures/`)
 - [x] Day 4: features, preprocessing and grouped CV folds (`notebooks/04_features_and_cv.ipynb`, `src/immuno.py`, `data/processed/folds.csv`)
-- [ ] Days 5–7: Binomial GLM, XGBoost, checkpoint
+- [x] Day 5: Binomial GLM, overdispersion, regularisation, sensitivity (`notebooks/05_binomial_glm.ipynb`; CV results in `results/`)
+- [ ] Days 6–7: XGBoost, checkpoint
 - [ ] Days 8–14: Bayesian model, sequence features, comparison, interpretation
 - [ ] Days 15–21: figures, dashboard, presentation
 
