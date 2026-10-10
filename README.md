@@ -32,7 +32,8 @@ All are compared using **grouped cross-validation by drug**, so that no drug app
 
 ## Repo layout
 ```
-data/raw/     original IDC CSV files (never edited)
+data/raw/        original IDC CSV files (never edited)
+data/processed/  clean tables made by the notebooks
 notebooks/    Colab notebooks, numbered in order
 app/          Streamlit dashboard
 figures/      saved charts
@@ -42,7 +43,7 @@ slides/       final presentation
 
 ## Progress
 - [x] Day 1: load and inspect (`notebooks/01_load_and_inspect.ipynb`)
-- [ ] Day 2: target definition and preprocessing
+- [x] Day 2: target definition and cleaning (`notebooks/02_target_and_cleaning.ipynb` → `data/processed/cohorts.csv`, 1,754 cohorts × 137 drugs)
 - [ ] Day 3: exploratory analysis
 - [ ] Days 4–7: features, grouped CV, GLM, XGBoost
 - [ ] Days 8–14: Bayesian model, sequence features, comparison, interpretation
