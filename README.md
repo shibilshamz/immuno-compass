@@ -44,7 +44,7 @@ slides/       final presentation
 ## Progress
 - [x] Day 1: load and inspect (`notebooks/01_load_and_inspect.ipynb`)
 - [x] Day 2: target definition and cleaning (`notebooks/02_target_and_cleaning.ipynb` → `data/processed/cohorts.csv`, 1,754 cohorts × 137 drugs)
-- [ ] Day 3: exploratory analysis
+- [x] Day 3: exploratory analysis (`notebooks/03_exploratory_analysis.ipynb`, charts in `figures/`)
 - [ ] Days 4–7: features, grouped CV, GLM, XGBoost
 - [ ] Days 8–14: Bayesian model, sequence features, comparison, interpretation
 - [ ] Days 15–21: figures, dashboard, presentation
