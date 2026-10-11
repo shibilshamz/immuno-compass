@@ -143,5 +143,5 @@ Shared code: `src/immuno.py`. Saved models: `models/`. Dashboard: `app/app.py`.
 
 1. Re-runnable notebook pipeline: `notebooks/01`–`12`
 2. Sequence-feature experiment (tested, not adopted): `notebooks/09_sequence_features.ipynb`
-3. Interactive Streamlit dashboard: `app/`
+3. Interactive Streamlit dashboard: `app/`, live at https://immuno-compass-6vv9xjcxqs9rzp6dztbn2x.streamlit.app
 4. Presentation: `slides/`

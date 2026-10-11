@@ -1,6 +1,8 @@
 # Immuno Compass
 
 **Data-driven prediction and analysis of immunogenicity in therapeutic biologics.**
+
+🧭 **Live dashboard:** https://immuno-compass-6vv9xjcxqs9rzp6dztbn2x.streamlit.app
 Foundations of Data Science course project.
 
 ## The question

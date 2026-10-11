@@ -65,7 +65,7 @@ I also promised to try molecular features. From the sequence table I computed fi
 
 ## Slide 16 · Interactive dashboard
 
-The fourth deliverable is an interactive Streamlit dashboard. In the Explore tab you can group ADA frequency by origin, route, disease area or dose and filter the data. In the Predict tab you describe a drug and a trial and get the XGBoost estimate and the Bayesian Beta-Binomial range, including how many patients out of a group of your chosen size might be ADA-positive. The app never retrains; it loads the saved models together with their preprocessing, which avoids the classic mismatch between training and the app. If time allows, I can show it live.
+The fourth deliverable is an interactive Streamlit dashboard. In the Explore tab you can group ADA frequency by origin, route, disease area or dose and filter the data. In the Predict tab you describe a drug and a trial and get the XGBoost estimate and the Bayesian Beta-Binomial range, including how many patients out of a group of your chosen size might be ADA-positive. The app never retrains; it loads the saved models together with their preprocessing, which avoids the classic mismatch between training and the app. It is online at https://immuno-compass-6vv9xjcxqs9rzp6dztbn2x.streamlit.app, and if time allows I can show it live.
 
 ## Slide 17 · Limitations and next steps
 

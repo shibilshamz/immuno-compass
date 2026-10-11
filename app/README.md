@@ -1,5 +1,7 @@
 # Immuno Compass dashboard
 
+**Live app:** https://immuno-compass-6vv9xjcxqs9rzp6dztbn2x.streamlit.app
+
 An interactive Streamlit app with four tabs:
 
 | Tab | What it does |
