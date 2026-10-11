@@ -13,6 +13,10 @@ The app **never retrains**. It loads `data/processed/cohorts.csv`, `models/xgb_m
 `models/bayes_betabinomial.joblib` (each with its fitted preprocessing) and `results/`. Predictions therefore use exactly the
 training recipe.
 
+## Open it from Google Colab (easiest, no extra accounts)
+Open `notebooks/13_open_dashboard_in_colab.ipynb` in Colab and run all cells. The last cell gives a link that opens the
+dashboard in a new tab (live while the Colab session runs).
+
 ## Run it on a laptop
 ```bash
 pip install -r app/requirements.txt
