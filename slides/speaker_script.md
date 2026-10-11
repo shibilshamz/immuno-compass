@@ -5,7 +5,7 @@ Tip: practise out loud twice with a timer; slides 10–14 (results) deserve the 
 
 ## Slide 1 · Immuno Compass
 
-Hello everyone. My project is called Immuno Compass. It is about a safety and effectiveness problem with modern biologic medicines: sometimes the patient's immune system attacks the drug. I used a newly consolidated public database of clinical trials to ask two questions: can we predict how often this happens for a drug, and which factors are linked to it? I will walk you through the data, the three modelling approaches, an honest comparison, and what the models agree on.
+Hello everyone, I am Siya Salim. My project is called Immuno Compass. It is about a safety and effectiveness problem with modern biologic medicines: sometimes the patient's immune system attacks the drug. I used a newly consolidated public database of clinical trials to ask two questions: can we predict how often this happens for a drug, and which factors are linked to it? I will walk you through the data, the three modelling approaches, an honest comparison, and what the models agree on.
 
 ## Slide 2 · When the immune system attacks the medicine
 
