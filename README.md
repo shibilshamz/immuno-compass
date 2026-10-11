@@ -66,6 +66,6 @@ src/          shared code: feature lists, preprocessing, metrics (used by every 
 Open a notebook from GitHub in Colab (File → Open notebook → GitHub, tick "Include private repos").
 If the data folder isn't found, the notebook will ask you to upload the 5 CSV files.
 
-### Colab with the private repo (notebooks 04 onwards)
-The first cell asks for a GitHub token and clones the repo, so data and `src/` are available.
-Create one at github.com/settings/tokens → *Fine-grained token* → repository access: `immuno-compass` → *Contents: Read-only*.
+### Colab (notebooks 04 onwards)
+The first cell downloads the repository automatically. If the repository is private, it asks for a GitHub token instead:
+create one at github.com/settings/tokens → *Fine-grained token* → repository access: `immuno-compass` → *Contents: Read-only*.
